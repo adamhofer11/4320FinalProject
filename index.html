@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="mb-4">Welcome to the Bus Reservation System</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Make a Reservation</h5>
+                    <p class="card-text">Reserve your seat for the hackathon trip.</p>
+                    <a href="{{ url_for('reserve') }}" class="btn btn-primary">Reserve Now</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Admin Portal</h5>
+                    <p class="card-text">Access the admin dashboard to manage reservations.</p>
+                    <a href="{{ url_for('admin_login') }}" class="btn btn-secondary">Admin Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
