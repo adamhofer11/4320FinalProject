@@ -109,9 +109,9 @@ def admin_dashboard():
         
     total_sales = sum(get_cost_matrix()[r['seatRow']][r['seatColumn']] for r in reservations)
     return render_template('admin_dashboard.html', 
-                         reservations=reservations,
-                         total_sales=total_sales,
-                         cost_matrix=get_cost_matrix())
+                        reservations=reservations,
+                        total_sales=total_sales,
+                        cost_matrix=get_cost_matrix())
 
 @app.route('/reserve', methods=['GET', 'POST'])
 def reserve():
@@ -132,7 +132,7 @@ def reserve():
             
             # Check if seat is already reserved
             cursor.execute("SELECT * FROM reservations WHERE seatRow = ? AND seatColumn = ?",
-                         (row, column))
+                        (row, column))
             if cursor.fetchone():
                 db.close()
                 flash('Seat already reserved')
@@ -163,8 +163,8 @@ def reserve():
         db.close()
         
         return render_template('reserve.html', 
-                             cost_matrix=get_cost_matrix(),
-                             reservations=reservations)
+                            cost_matrix=get_cost_matrix(),
+                            reservations=reservations)
     except Exception as e:
         print(f"Error loading reservations: {str(e)}")
         flash('Error loading seating chart. Please try again.')
