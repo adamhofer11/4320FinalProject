@@ -13,6 +13,6 @@ VOLUME /app/data
 # Set environment variable for database path
 ENV DATABASE_PATH=/app/data/reservations.db
 
-EXPOSE 5000
+EXPOSE 5009
 
 CMD ["python", "app.py"] 
