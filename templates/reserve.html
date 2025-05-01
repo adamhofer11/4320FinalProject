@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3>Make a Reservation</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="first_name" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="last_name" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="row" class="form-label">Row (1-12)</label>
+                        <input type="number" class="form-control" id="row" name="row" min="1" max="12" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="column" class="form-label">Column (1-4)</label>
+                        <input type="number" class="form-control" id="column" name="column" min="1" max="4" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Reserve Seat</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h3>Seating Chart</h3>
+        <div class="seating-chart mb-4">
+            {% for row in range(12) %}
+            <div class="row mb-2">
+                {% for col in range(4) %}
+                    {% set reserved = false %}
+                    {% if reservations %}
+                        {% for reservation in reservations %}
+                            {% if reservation.seatRow == row and reservation.seatColumn == col %}
+                                {% set reserved = true %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <div class="seat {% if reserved %}reserved{% else %}available{% endif %}" 
+                         {% if not reserved %}onclick="selectSeat({{ row + 1 }}, {{ col + 1 }})"{% endif %}>
+                        {{ row + 1 }}{{ ['A', 'B', 'C', 'D'][col] }}
+                        <br>
+                        <small>${{ cost_matrix[row][col] }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function selectSeat(row, col) {
+    document.getElementById('row').value = row;
+    document.getElementById('column').value = col;
+}
+</script>
+{% endblock %} 

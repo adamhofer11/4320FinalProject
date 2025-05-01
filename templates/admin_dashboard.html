@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{# Admin Dashboard Template #}
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2>Seating Chart</h2>
+        <div class="seat-legend">
+            <div class="legend-item">
+                <div class="legend-box available"></div>
+                <span>Available</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box reserved"></div>
+                <span>Reserved</span>
+            </div>
+        </div>
+        <div class="seating-chart mb-4">
+            {% for row in range(12) %}
+            <div class="row mb-2">
+                {% for col in range(4) %}
+                    {% set reserved = false %}
+                    {% if reservations %}
+                        {% for reservation in reservations %}
+                            {% if reservation.seatRow == row and reservation.seatColumn == col %}
+                                {% set reserved = true %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <div class="seat {% if reserved %}reserved{% else %}available{% endif %}">
+                        {{ row + 1 }}{{ ['A', 'B', 'C', 'D'][col] }}
+                    </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Total Sales</h3>
+            </div>
+            <div class="card-body">
+                <h4 class="text-center">${{ total_sales }}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <h2>Reservations</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Seat</th>
+                    <th>Reservation Code</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in reservations %}
+                <tr>
+                    <td>{{ reservation.passengerName }}</td>
+                    <td>{{ reservation.seatRow + 1 }}{{ ['A', 'B', 'C', 'D'][reservation.seatColumn] }}</td>
+                    <td>{{ reservation.eTicketNumber }}</td>
+                    <td>${{ cost_matrix[reservation.seatRow][reservation.seatColumn] }}</td>
+                    <td>
+                        <a href="{{ url_for('delete_reservation', id=reservation.id) }}" 
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure you want to delete this reservation?')">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 
