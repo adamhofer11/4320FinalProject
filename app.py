@@ -103,18 +103,27 @@ def admin_dashboard():
     
     db = get_db()
     cursor = db.cursor()
+
+    reserved_seats = previous_reserves(cursor)
+    
     cursor.execute("SELECT * FROM reservations")
     reservations = cursor.fetchall()
     db.close()
-        
+    
     total_sales = sum(get_cost_matrix()[r['seatRow']][r['seatColumn']] for r in reservations)
     return render_template('admin_dashboard.html', 
                          reservations=reservations,
                          total_sales=total_sales,
-                         cost_matrix=get_cost_matrix())
+                         cost_matrix=get_cost_matrix(),
+                         prev_reservations=reserved_seats)
 
 @app.route('/reserve', methods=['GET', 'POST'])
 def reserve():
+    db = get_db()
+    cursor = db.cursor()
+
+    reserved_seats = previous_reserves(cursor)
+    
     if request.method == 'POST':
         try:
             first_name = request.form.get('first_name')
@@ -126,9 +135,6 @@ def reserve():
             
             passenger_name = f"{first_name} {last_name}"
             e_ticket = generate_reservation_code()
-            
-            db = get_db()
-            cursor = db.cursor()
             
             # Check if seat is already reserved
             cursor.execute("SELECT * FROM reservations WHERE seatRow = ? AND seatColumn = ?",
@@ -162,9 +168,10 @@ def reserve():
         reservations = cursor.fetchall()
         db.close()
         
-        return render_template('reserve.html', 
+        return render_template('reserve.html',
                              cost_matrix=get_cost_matrix(),
-                             reservations=reservations)
+                             reservations=reservations,
+                             prev_reservations=reserved_seats)
     except Exception as e:
         print(f"Error loading reservations: {str(e)}")
         flash('Error loading seating chart. Please try again.')
@@ -188,6 +195,12 @@ def delete_reservation(id):
 def logout():
     session.pop('admin', None)
     return redirect(url_for('index'))
+
+def previous_reserves(cursor):
+    cursor.execute("SELECT * FROM reservations")
+    reservations_raw = cursor.fetchall()
+
+    return set((r[2], r[3]) for r in reservations_raw)
 
 if __name__ == '__main__':
     # Delete the database file to start fresh

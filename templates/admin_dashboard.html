@@ -19,16 +19,12 @@
             {% for row in range(12) %}
             <div class="row mb-2">
                 {% for col in range(4) %}
-                    {% set reserved = false %}
-                    {% if reservations %}
-                        {% for reservation in reservations %}
-                            {% if reservation.seatRow == row and reservation.seatColumn == col %}
-                                {% set reserved = true %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    <div class="seat {% if reserved %}reserved{% else %}available{% endif %}">
+                    {% set reserved = (row, col) in prev_reservations %}
+                    <div class="seat {% if reserved %}reserved{% else %}available{% endif %}" 
+                         {% if not reserved %}onclick="selectSeat({{ row + 1 }}, {{ col + 1 }})"{% endif %}>
                         {{ row + 1 }}{{ ['A', 'B', 'C', 'D'][col] }}
+                        <br>
+                        <small>${{ cost_matrix[row][col] }}</small>
                     </div>
                 {% endfor %}
             </div>
