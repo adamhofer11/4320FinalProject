@@ -196,4 +196,4 @@ if __name__ == '__main__':
         os.remove(DATABASE_PATH)
     
     init_db()  # Initialize database with schema and default admin
-    app.run(host='0.0.0.0', debug=True) 
+    app.run(port=5001, host='0.0.0.0', debug=True) 
